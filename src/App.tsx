@@ -44,11 +44,29 @@ const App = () => {
   
   
   const handleAddToCart = (clickedItem: CartItemType) => {
-    
+    setCartItems(prev => {
+      const isIn = prev.find(item => item.id === clickedItem.id)
+      
+      if (isIn) {
+        return prev.map(item => (
+          item.id === clickedItem.id ? {...item, ammount: item.ammount + 1} : item
+        ))
+      }
+      return [...prev, {...clickedItem, ammount: 1}]
+    })
   }
 
-  const handleRemoveFromCart = () => {
-    
+  const handleRemoveFromCart = (id: number) => {
+    setCartItems((prev) =>
+      prev.reduce((ack, item) => {
+        if (item.id === id) {
+          if (item.ammount === 1) return ack;
+          return [...ack, { ...item, ammount: item.ammount - 1 }];
+        } else {
+          return [...ack, item];
+        }
+      }, [] as CartItemType[])
+    );
   }
 
   if (isLoading) return <LinearProgress />
